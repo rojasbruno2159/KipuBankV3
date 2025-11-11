@@ -7,7 +7,7 @@
 ### **Mejoras respecto a V2**
 - **Depósitos generalizados:** admite cualquier token ERC-20 soportado por Uniswap V2 (además de ETH).  
 - **Conversión automática a USDC:** todo depósito se swapea a USDC usando **Uniswap V2 Router**.  
-- **Oráculos de Chainlink:** `AggregatorV3Interface` para ETH/USD y token/USD.  
+- **Integración de swaps automatizados:**  el protocolo realiza internamente el intercambio de tokens por USDC, sin intervención manual del usuario. 
 - **Gestión de activos dinámica:** `mapping(address => AssetConfig)` para habilitar/inhabilitar activos y asociarles price feeds.  
 - **Límite de exposición:** `bankCap` en USDC; previene sobrecapitalización del protocolo.  
 - **Control de acceso (RBAC):** `AccessControl` de OpenZeppelin; solo roles administrativos modifican parámetros críticos.  
