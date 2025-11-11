@@ -1,0 +1,88 @@
+{
+	"compiler": {
+		"version": "0.8.30+commit.73712a01"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [],
+				"name": "NATIVE_TOKEN",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"details": "Provides the `AssetConfig` struct and defines a constant for representing native ETH.",
+			"kind": "dev",
+			"methods": {},
+			"stateVariables": {
+				"NATIVE_TOKEN": {
+					"details": "Using address(0) avoids conflict with real ERC20 tokens."
+				}
+			},
+			"title": "Types Library",
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {
+				"NATIVE_TOKEN()": {
+					"notice": "Special address used to represent native ETH as a \"token\" within mappings."
+				}
+			},
+			"notice": "Contains shared data structures and constants used by KipuBank contracts.",
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"src/Types.sol": "Types"
+		},
+		"evmVersion": "prague",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": [
+			":@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
+			":V2-periphery/=lib/V2-periphery/contracts/",
+			":chainlink-brownie-contracts/=lib/chainlink-brownie-contracts/",
+			":erc4626-tests/=lib/openzeppelin-contracts/lib/erc4626-tests/",
+			":forge-std/=lib/forge-std/src/",
+			":halmos-cheatcodes/=lib/openzeppelin-contracts/lib/halmos-cheatcodes/src/",
+			":openzeppelin-contracts/=lib/openzeppelin-contracts/",
+			":v2-periphery/=lib/v2-periphery/contracts/"
+		]
+	},
+	"sources": {
+		"lib/chainlink-brownie-contracts/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol": {
+			"keccak256": "0x257a8d28fa83d3d942547c8e129ef465e4b5f3f31171e7be4739a4c98da6b4f0",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://6d39e11b1dc7b9b8ccdabbc9be442ab7cda4a81c748f57e316dcb1bcb4a28bf9",
+				"dweb:/ipfs/QmaG6vz6W6iEUBsbHSBob5mdcitYxWjoygxREHpsJHfWrS"
+			]
+		},
+		"src/Types.sol": {
+			"keccak256": "0x3eb8fe1bb1326be93b247538429e5b68db824959325653549901a8f3ed612454",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://acb00e4cf7b30259d0853c2d473e395958ba996607d36c092890e8a2fbf5c4e6",
+				"dweb:/ipfs/QmX9XfEyz6Mw7txcYyFPuD4isGm8i3aregi4mdHkhKNoJN"
+			]
+		}
+	},
+	"version": 1
+}

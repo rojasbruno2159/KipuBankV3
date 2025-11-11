@@ -1,0 +1,1535 @@
+{
+	"compiler": {
+		"version": "0.8.30+commit.73712a01"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_bankCapUsd",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_withdrawLimitPerTxNative",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "_ethUsdFeed",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_uniswapRouter",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_usdc",
+						"type": "address"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"inputs": [],
+				"name": "AccessControlBadConfirmation",
+				"type": "error"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "account",
+						"type": "address"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "neededRole",
+						"type": "bytes32"
+					}
+				],
+				"name": "AccessControlUnauthorizedAccount",
+				"type": "error"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "token",
+						"type": "address"
+					}
+				],
+				"name": "AssetDisabled",
+				"type": "error"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "currentTotalUsd",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "attemptedUsd",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "capUsd",
+						"type": "uint256"
+					}
+				],
+				"name": "BankCapExceeded",
+				"type": "error"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "availableUSDC",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "requestedUSDC",
+						"type": "uint256"
+					}
+				],
+				"name": "InsufficientBalance",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "InvalidValue",
+				"type": "error"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "token",
+						"type": "address"
+					}
+				],
+				"name": "MissingPriceFeed",
+				"type": "error"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "token",
+						"type": "address"
+					}
+				],
+				"name": "NoDirectUSDCPath",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "Reentrancy",
+				"type": "error"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "token",
+						"type": "address"
+					}
+				],
+				"name": "SafeERC20FailedOperation",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "SlippageTooHigh",
+				"type": "error"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "to",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					}
+				],
+				"name": "TransferFailed",
+				"type": "error"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "requested",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "limit",
+						"type": "uint256"
+					}
+				],
+				"name": "WithdrawLimitExceeded",
+				"type": "error"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "token",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "priceFeed",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "bool",
+						"name": "enabled",
+						"type": "bool"
+					}
+				],
+				"name": "AssetConfigured",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "amountWei",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "creditedUSDC",
+						"type": "uint256"
+					}
+				],
+				"name": "DepositedNative",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "token",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "creditedUSDC",
+						"type": "uint256"
+					}
+				],
+				"name": "DepositedToken",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "tokenIn",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "amountIn",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "usdcCredited",
+						"type": "uint256"
+					}
+				],
+				"name": "DepositedViaUniswap",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "bytes32",
+						"name": "role",
+						"type": "bytes32"
+					},
+					{
+						"indexed": true,
+						"internalType": "bytes32",
+						"name": "previousAdminRole",
+						"type": "bytes32"
+					},
+					{
+						"indexed": true,
+						"internalType": "bytes32",
+						"name": "newAdminRole",
+						"type": "bytes32"
+					}
+				],
+				"name": "RoleAdminChanged",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "bytes32",
+						"name": "role",
+						"type": "bytes32"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "account",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "sender",
+						"type": "address"
+					}
+				],
+				"name": "RoleGranted",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "bytes32",
+						"name": "role",
+						"type": "bytes32"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "account",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "sender",
+						"type": "address"
+					}
+				],
+				"name": "RoleRevoked",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "oldRouter",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "newRouter",
+						"type": "address"
+					}
+				],
+				"name": "RouterUpdated",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "oldUsdc",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "newUsdc",
+						"type": "address"
+					}
+				],
+				"name": "UsdcUpdated",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "amountWei",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "debitedUSDC",
+						"type": "uint256"
+					}
+				],
+				"name": "WithdrawnNative",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "amountWei",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "usdcSpent",
+						"type": "uint256"
+					}
+				],
+				"name": "WithdrawnNativeViaUniswap",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "token",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "debitedUSDC",
+						"type": "uint256"
+					}
+				],
+				"name": "WithdrawnToken",
+				"type": "event"
+			},
+			{
+				"stateMutability": "payable",
+				"type": "fallback"
+			},
+			{
+				"inputs": [],
+				"name": "ADMIN_ROLE",
+				"outputs": [
+					{
+						"internalType": "bytes32",
+						"name": "",
+						"type": "bytes32"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "DEFAULT_ADMIN_ROLE",
+				"outputs": [
+					{
+						"internalType": "bytes32",
+						"name": "",
+						"type": "bytes32"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "bankCapUsd",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "depositNative",
+				"outputs": [],
+				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "minUSDCOut",
+						"type": "uint256"
+					}
+				],
+				"name": "depositNativeViaUniswapV2",
+				"outputs": [],
+				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "token",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					}
+				],
+				"name": "depositToken",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "tokenIn",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amountIn",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "minUSDCOut",
+						"type": "uint256"
+					}
+				],
+				"name": "depositTokenViaUniswapV2",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "amountUSDC",
+						"type": "uint256"
+					}
+				],
+				"name": "depositUSDC",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "ethUsdFeed",
+				"outputs": [
+					{
+						"internalType": "contract AggregatorV3Interface",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "token",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					}
+				],
+				"name": "getBalanceUSDC",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "balanceUSDC",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes32",
+						"name": "role",
+						"type": "bytes32"
+					}
+				],
+				"name": "getRoleAdmin",
+				"outputs": [
+					{
+						"internalType": "bytes32",
+						"name": "",
+						"type": "bytes32"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes32",
+						"name": "role",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "address",
+						"name": "account",
+						"type": "address"
+					}
+				],
+				"name": "grantRole",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes32",
+						"name": "role",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "address",
+						"name": "account",
+						"type": "address"
+					}
+				],
+				"name": "hasRole",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "token",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					}
+				],
+				"name": "previewTokenToUSDC",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "creditedUSDC",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "tokenIn",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amountIn",
+						"type": "uint256"
+					}
+				],
+				"name": "previewTokenToUSDCByRouter",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "amountWei",
+						"type": "uint256"
+					}
+				],
+				"name": "previewWeiToUSDC",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "creditedUSDC",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "amountWei",
+						"type": "uint256"
+					}
+				],
+				"name": "previewWeiToUSDCByRouter",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes32",
+						"name": "role",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "address",
+						"name": "callerConfirmation",
+						"type": "address"
+					}
+				],
+				"name": "renounceRole",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes32",
+						"name": "role",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "address",
+						"name": "account",
+						"type": "address"
+					}
+				],
+				"name": "revokeRole",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "token",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "priceFeed",
+						"type": "address"
+					},
+					{
+						"internalType": "bool",
+						"name": "enabled",
+						"type": "bool"
+					}
+				],
+				"name": "setAssetConfig",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "newUsdc",
+						"type": "address"
+					}
+				],
+				"name": "setUSDC",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "newRouter",
+						"type": "address"
+					}
+				],
+				"name": "setUniswapRouter",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes4",
+						"name": "interfaceId",
+						"type": "bytes4"
+					}
+				],
+				"name": "supportsInterface",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "totalDepositCount",
+				"outputs": [
+					{
+						"internalType": "uint128",
+						"name": "",
+						"type": "uint128"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "totalUsdDeposits",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "totalWithdrawCount",
+				"outputs": [
+					{
+						"internalType": "uint128",
+						"name": "",
+						"type": "uint128"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "uniswapRouter",
+				"outputs": [
+					{
+						"internalType": "contract IUniswapV2Router02",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "usdc",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "weth",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "withdrawLimitPerTxNative",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "amountWei",
+						"type": "uint256"
+					}
+				],
+				"name": "withdrawNative",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "amountWei",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "maxUSDCIn",
+						"type": "uint256"
+					}
+				],
+				"name": "withdrawNativeViaUniswapV2",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "token",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amountToken",
+						"type": "uint256"
+					}
+				],
+				"name": "withdrawToken",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"stateMutability": "payable",
+				"type": "receive"
+			}
+		],
+		"devdoc": {
+			"details": "Strict layout: variables → events → errors → functions. Preserves V2 public surface and storage.      New Uniswap-based entrypoints are additive: they do not modify V2 behavior.      All balances are accounted in USDC units (6 decimals) per token key, consistent with V2 (nested mapping).",
+			"errors": {
+				"AccessControlBadConfirmation()": [
+					{
+						"details": "The caller of a function is not the expected one. NOTE: Don't confuse with {AccessControlUnauthorizedAccount}."
+					}
+				],
+				"AccessControlUnauthorizedAccount(address,bytes32)": [
+					{
+						"details": "The `account` is missing a role."
+					}
+				],
+				"SafeERC20FailedOperation(address)": [
+					{
+						"details": "An operation with an ERC-20 token failed."
+					}
+				]
+			},
+			"events": {
+				"RoleAdminChanged(bytes32,bytes32,bytes32)": {
+					"details": "Emitted when `newAdminRole` is set as ``role``'s admin role, replacing `previousAdminRole` `DEFAULT_ADMIN_ROLE` is the starting admin for all roles, despite {RoleAdminChanged} not being emitted to signal this."
+				},
+				"RoleGranted(bytes32,address,address)": {
+					"details": "Emitted when `account` is granted `role`. `sender` is the account that originated the contract call. This account bears the admin role (for the granted role). Expected in cases where the role was granted using the internal {AccessControl-_grantRole}."
+				},
+				"RoleRevoked(bytes32,address,address)": {
+					"details": "Emitted when `account` is revoked `role`. `sender` is the account that originated the contract call:   - if using `revokeRole`, it is the admin role bearer   - if using `renounceRole`, it is the role bearer (i.e. `account`)"
+				}
+			},
+			"kind": "dev",
+			"methods": {
+				"constructor": {
+					"details": "Native ETH is registered as an enabled asset using the provided ETH/USD feed (for V2 views).",
+					"params": {
+						"_bankCapUsd": "Global cap in USDC units (6 decimals).",
+						"_ethUsdFeed": "Chainlink ETH/USD price feed (kept for V2 compatibility).",
+						"_uniswapRouter": "Uniswap V2 router address. ",
+						"_usdc": "USDC token address (6 decimals). ",
+						"_withdrawLimitPerTxNative": "Per-transaction native withdraw limit in wei (legacy V2)."
+					}
+				},
+				"depositNative()": {
+					"details": "Preserved from V2 for compatibility. Uses price feed, not Uniswap swap. Subject to bank cap."
+				},
+				"depositNativeViaUniswapV2(uint256)": {
+					"details": "Bank cap is enforced using a pre-swap expectedOut check and capping the credited amount if needed.",
+					"params": {
+						"minUSDCOut": "Minimum acceptable USDC out to protect against slippage."
+					}
+				},
+				"depositToken(address,uint256)": {
+					"details": "Preserved from V2 for compatibility. Uses price feed, not Uniswap swap. Subject to bank cap.",
+					"params": {
+						"amount": "The token amount to deposit (token decimals).",
+						"token": "The ERC20 token to deposit."
+					}
+				},
+				"depositTokenViaUniswapV2(address,uint256,uint256)": {
+					"details": "If the token is USDC itself, use depositUSDC() instead for clarity.",
+					"params": {
+						"amountIn": "Amount in token decimals.",
+						"minUSDCOut": "Minimum acceptable USDC out to protect against slippage.",
+						"tokenIn": "ERC20 token to deposit."
+					}
+				},
+				"depositUSDC(uint256)": {
+					"details": "Convenience helper for V3 symmetry; equivalent to V2 token deposit priced at 1:1 for USDC.",
+					"params": {
+						"amountUSDC": "Amount in USDC (6 decimals)."
+					}
+				},
+				"getBalanceUSDC(address,address)": {
+					"details": "For V3 Uniswap-based deposits, balances accumulate under the USDC token bucket.",
+					"params": {
+						"token": "The token bucket address (use address(0) for native; USDC bucket is {usdc}).",
+						"user": "The user address to query."
+					}
+				},
+				"getRoleAdmin(bytes32)": {
+					"details": "Returns the admin role that controls `role`. See {grantRole} and {revokeRole}. To change a role's admin, use {_setRoleAdmin}."
+				},
+				"grantRole(bytes32,address)": {
+					"details": "Grants `role` to `account`. If `account` had not been already granted `role`, emits a {RoleGranted} event. Requirements: - the caller must have ``role``'s admin role. May emit a {RoleGranted} event."
+				},
+				"hasRole(bytes32,address)": {
+					"details": "Returns `true` if `account` has been granted `role`."
+				},
+				"previewTokenToUSDC(address,uint256)": {
+					"params": {
+						"amount": "Amount in token decimals.",
+						"token": "ERC20 token."
+					}
+				},
+				"previewTokenToUSDCByRouter(address,uint256)": {
+					"params": {
+						"amountIn": "Amount in token decimals.",
+						"tokenIn": "ERC20 token."
+					}
+				},
+				"previewWeiToUSDC(uint256)": {
+					"params": {
+						"amountWei": "ETH amount in wei."
+					}
+				},
+				"previewWeiToUSDCByRouter(uint256)": {
+					"params": {
+						"amountWei": "ETH amount in wei."
+					}
+				},
+				"renounceRole(bytes32,address)": {
+					"details": "Revokes `role` from the calling account. Roles are often managed via {grantRole} and {revokeRole}: this function's purpose is to provide a mechanism for accounts to lose their privileges if they are compromised (such as when a trusted device is misplaced). If the calling account had been revoked `role`, emits a {RoleRevoked} event. Requirements: - the caller must be `callerConfirmation`. May emit a {RoleRevoked} event."
+				},
+				"revokeRole(bytes32,address)": {
+					"details": "Revokes `role` from `account`. If `account` had been granted `role`, emits a {RoleRevoked} event. Requirements: - the caller must have ``role``'s admin role. May emit a {RoleRevoked} event."
+				},
+				"setAssetConfig(address,address,bool)": {
+					"details": "Kept for V2 compatibility; feeds are not used by Uniswap swap paths.",
+					"params": {
+						"enabled": "Whether to allow deposits/withdrawals for the asset.",
+						"priceFeed": "Chainlink AggregatorV3Interface for TOKEN/USD.",
+						"token": "ERC20 token address (use address(0) for native ETH)."
+					}
+				},
+				"setUSDC(address)": {
+					"details": "Useful for local/mock USDC in Foundry vs real USDC on testnet.",
+					"params": {
+						"newUsdc": "New USDC token address (6 decimals)."
+					}
+				},
+				"setUniswapRouter(address)": {
+					"details": "Allows switching between local Foundry router and testnet/mainnet router without redeploy.",
+					"params": {
+						"newRouter": "New router address."
+					}
+				},
+				"supportsInterface(bytes4)": {
+					"details": "Returns true if this contract implements the interface defined by `interfaceId`. See the corresponding https://eips.ethereum.org/EIPS/eip-165#how-interfaces-are-identified[ERC section] to learn more about how these ids are created. This function call must use less than 30 000 gas."
+				},
+				"withdrawNative(uint256)": {
+					"details": "Preserved from V2. Does not use Uniswap swap; sends ETH from contract balance.",
+					"params": {
+						"amountWei": "The ETH amount to withdraw in wei."
+					}
+				},
+				"withdrawNativeViaUniswapV2(uint256,uint256)": {
+					"details": "Debits under the USDC bucket. This is the V3 symmetric path to deposit via Uniswap.",
+					"params": {
+						"amountWei": "ETH amount to receive (wei).",
+						"maxUSDCIn": "Maximum USDC the user is willing to spend to obtain the requested ETH (slippage bound)."
+					}
+				},
+				"withdrawToken(address,uint256)": {
+					"details": "Preserved from V2. Does not use Uniswap.",
+					"params": {
+						"amountToken": "The token amount to withdraw (token decimals).",
+						"token": "The ERC20 token address to withdraw."
+					}
+				}
+			},
+			"stateVariables": {
+				"balancesUSDC": {
+					"details": "Preserved from V2. In V3, Uniswap-based deposits credit under the USDC token key."
+				},
+				"bankCapUsd": {
+					"details": "Immutable to save gas."
+				},
+				"locked": {
+					"details": "Simple reentrancy lock flag."
+				}
+			},
+			"title": "KipuBankV3",
+			"version": 1
+		},
+		"userdoc": {
+			"errors": {
+				"AssetDisabled(address)": [
+					{
+						"notice": "Thrown when an asset is disabled."
+					}
+				],
+				"BankCapExceeded(uint256,uint256,uint256)": [
+					{
+						"notice": "Thrown when a deposit would exceed the global USD cap."
+					}
+				],
+				"InsufficientBalance(uint256,uint256)": [
+					{
+						"notice": "Thrown when a user attempts to withdraw more than their balance."
+					}
+				],
+				"InvalidValue()": [
+					{
+						"notice": "Thrown when a provided value is zero or otherwise invalid."
+					}
+				],
+				"MissingPriceFeed(address)": [
+					{
+						"notice": "Thrown when an asset lacks a configured price feed (kept for V2 compatibility)."
+					}
+				],
+				"NoDirectUSDCPath(address)": [
+					{
+						"notice": "Thrown when no direct path token <-> USDC is available in Uniswap V2."
+					}
+				],
+				"Reentrancy()": [
+					{
+						"notice": "Thrown on reentrancy attempts."
+					}
+				],
+				"SlippageTooHigh()": [
+					{
+						"notice": "Thrown on excessive slippage or user-provided bounds not met."
+					}
+				],
+				"TransferFailed(address,uint256)": [
+					{
+						"notice": "Thrown when a native transfer fails."
+					}
+				],
+				"WithdrawLimitExceeded(uint256,uint256)": [
+					{
+						"notice": "Thrown when a native-asset withdrawal exceeds the per-transaction limit."
+					}
+				]
+			},
+			"events": {
+				"AssetConfigured(address,address,bool)": {
+					"notice": "Emitted when an asset configuration is created or updated."
+				},
+				"DepositedNative(address,uint256,uint256)": {
+					"notice": "Emitted when a user deposits native ETH (legacy V2 path, priced by feed)."
+				},
+				"DepositedToken(address,address,uint256,uint256)": {
+					"notice": "Emitted when a user deposits an ERC20 token (legacy V2 path, priced by feed)."
+				},
+				"DepositedViaUniswap(address,address,uint256,uint256)": {
+					"notice": "Emitted when a user deposits via Uniswap V2 swap (credits under USDC bucket)."
+				},
+				"RouterUpdated(address,address)": {
+					"notice": "Emitted when admin changes the Uniswap router."
+				},
+				"UsdcUpdated(address,address)": {
+					"notice": "Emitted when admin changes the USDC token address."
+				},
+				"WithdrawnNative(address,uint256,uint256)": {
+					"notice": "Emitted when a user withdraws native ETH (legacy V2 path, debiting NATIVE token bucket)."
+				},
+				"WithdrawnNativeViaUniswap(address,uint256,uint256)": {
+					"notice": "Emitted when a user withdraws ETH via Uniswap V2 (USDC → ETH)."
+				},
+				"WithdrawnToken(address,address,uint256,uint256)": {
+					"notice": "Emitted when a user withdraws an ERC20 token (legacy V2 path)."
+				}
+			},
+			"kind": "user",
+			"methods": {
+				"ADMIN_ROLE()": {
+					"notice": "Role identifier for privileged administrators."
+				},
+				"bankCapUsd()": {
+					"notice": "Global bank cap in USD scaled to USDC decimals (6)."
+				},
+				"constructor": {
+					"notice": "Initializes the vault with V2-compatible state and V3 Uniswap router/USDC addresses."
+				},
+				"depositNative()": {
+					"notice": "Deposits native ETH and credits the sender in USDC units (6 decimals) using the ETH/USD feed (legacy V2)."
+				},
+				"depositNativeViaUniswapV2(uint256)": {
+					"notice": "Deposits native ETH and swaps to USDC via Uniswap V2, then credits under the USDC bucket."
+				},
+				"depositToken(address,uint256)": {
+					"notice": "Deposits an ERC20 token and credits in USDC units (6 decimals) using TOKEN/USD feed (legacy V2)."
+				},
+				"depositTokenViaUniswapV2(address,uint256,uint256)": {
+					"notice": "Deposits an ERC20 token (with a direct pair to USDC in Uniswap V2), swaps to USDC, and credits under USDC bucket."
+				},
+				"depositUSDC(uint256)": {
+					"notice": "Deposits USDC directly (credits under USDC bucket)."
+				},
+				"ethUsdFeed()": {
+					"notice": "Chainlink price feed for ETH/USD (kept for V2 compatibility and views)."
+				},
+				"getBalanceUSDC(address,address)": {
+					"notice": "Returns the user balance for a token bucket, in USDC units (6 decimals)."
+				},
+				"previewTokenToUSDC(address,uint256)": {
+					"notice": "Previews TOKEN→USDC using Chainlink feed (legacy V2 informational view)."
+				},
+				"previewTokenToUSDCByRouter(address,uint256)": {
+					"notice": "Router-based preview: TOKEN→USDC expected out via Uniswap V2 path (token→USDC)."
+				},
+				"previewWeiToUSDC(uint256)": {
+					"notice": "Previews ETH→USDC using Chainlink feed (legacy V2 informational view)."
+				},
+				"previewWeiToUSDCByRouter(uint256)": {
+					"notice": "Router-based preview: ETH→USDC expected out via Uniswap V2 path (wETH→USDC)."
+				},
+				"setAssetConfig(address,address,bool)": {
+					"notice": "Configures or updates a token’s Chainlink feed and enablement (admin only)."
+				},
+				"setUSDC(address)": {
+					"notice": "Updates USDC token address (admin only)."
+				},
+				"setUniswapRouter(address)": {
+					"notice": "Updates Uniswap V2 router (admin only)."
+				},
+				"totalDepositCount()": {
+					"notice": "Total successful deposit operations performed."
+				},
+				"totalUsdDeposits()": {
+					"notice": "Global total of user deposits valued in USD (USDC 6 decimals)."
+				},
+				"totalWithdrawCount()": {
+					"notice": "Total successful withdraw operations performed."
+				},
+				"uniswapRouter()": {
+					"notice": "Uniswap V2 router used for on-chain swaps."
+				},
+				"usdc()": {
+					"notice": "USDC token used as the accounting unit (6 decimals)."
+				},
+				"weth()": {
+					"notice": "WETH address resolved from the router."
+				},
+				"withdrawLimitPerTxNative()": {
+					"notice": "Per-transaction withdrawal limit for native ETH, in wei (legacy V2 behavior)."
+				},
+				"withdrawNative(uint256)": {
+					"notice": "Withdraws native ETH; debits the sender’s USDC-accounting bucket for native (legacy V2)."
+				},
+				"withdrawNativeViaUniswapV2(uint256,uint256)": {
+					"notice": "Withdraws native ETH by swapping the caller's USDC balance to ETH via Uniswap V2, enforcing per-tx native limit."
+				},
+				"withdrawToken(address,uint256)": {
+					"notice": "Withdraws an ERC20 token; debits the sender’s USDC-accounting bucket for that token (legacy V2)."
+				}
+			},
+			"notice": "Multi-asset vault with a USD-denominated global bank cap; preserves V2 features (Chainlink feeds API kept) and extends deposits/withdrawals using Uniswap V2 swaps.",
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"src/KipuBankV3.sol": "KipuBankV3"
+		},
+		"evmVersion": "prague",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": [
+			":@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
+			":V2-periphery/=lib/V2-periphery/contracts/",
+			":chainlink-brownie-contracts/=lib/chainlink-brownie-contracts/",
+			":erc4626-tests/=lib/openzeppelin-contracts/lib/erc4626-tests/",
+			":forge-std/=lib/forge-std/src/",
+			":halmos-cheatcodes/=lib/openzeppelin-contracts/lib/halmos-cheatcodes/src/",
+			":openzeppelin-contracts/=lib/openzeppelin-contracts/",
+			":v2-periphery/=lib/v2-periphery/contracts/"
+		]
+	},
+	"sources": {
+		"lib/chainlink-brownie-contracts/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol": {
+			"keccak256": "0x257a8d28fa83d3d942547c8e129ef465e4b5f3f31171e7be4739a4c98da6b4f0",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://6d39e11b1dc7b9b8ccdabbc9be442ab7cda4a81c748f57e316dcb1bcb4a28bf9",
+				"dweb:/ipfs/QmaG6vz6W6iEUBsbHSBob5mdcitYxWjoygxREHpsJHfWrS"
+			]
+		},
+		"lib/openzeppelin-contracts/contracts/access/AccessControl.sol": {
+			"keccak256": "0x1a6b4f6b7798ab80929d491b89d5427a9b3338c0fd1acd0ba325f69c6f1646af",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://7bb7f346c12a14dc622bc105ce3c47202fbc89f4b153a28a63bb68193297330c",
+				"dweb:/ipfs/QmagwF8P3bUBXwdo159ueEnY9dLSvEWwK24kk2op58egwG"
+			]
+		},
+		"lib/openzeppelin-contracts/contracts/access/IAccessControl.sol": {
+			"keccak256": "0xbff9f59c84e5337689161ce7641c0ef8e872d6a7536fbc1f5133f128887aba3c",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://b308f882e796f7b79c9502deacb0a62983035c6f6f4e962b319ba6a1f4a77d3d",
+				"dweb:/ipfs/QmaWCW7ahEQqFjwhSUhV7Ae7WhfNvzSpE7DQ58hvEooqPL"
+			]
+		},
+		"lib/openzeppelin-contracts/contracts/interfaces/IERC1363.sol": {
+			"keccak256": "0xd5ea07362ab630a6a3dee4285a74cf2377044ca2e4be472755ad64d7c5d4b69d",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://da5e832b40fc5c3145d3781e2e5fa60ac2052c9d08af7e300dc8ab80c4343100",
+				"dweb:/ipfs/QmTzf7N5ZUdh5raqtzbM11yexiUoLC9z3Ws632MCuycq1d"
+			]
+		},
+		"lib/openzeppelin-contracts/contracts/interfaces/IERC165.sol": {
+			"keccak256": "0x0afcb7e740d1537b252cb2676f600465ce6938398569f09ba1b9ca240dde2dfc",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://1c299900ac4ec268d4570ecef0d697a3013cd11a6eb74e295ee3fbc945056037",
+				"dweb:/ipfs/Qmab9owJoxcA7vJT5XNayCMaUR1qxqj1NDzzisduwaJMcZ"
+			]
+		},
+		"lib/openzeppelin-contracts/contracts/interfaces/IERC20.sol": {
+			"keccak256": "0x1a6221315ce0307746c2c4827c125d821ee796c74a676787762f4778671d4f44",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://1bb2332a7ee26dd0b0de9b7fe266749f54820c99ab6a3bcb6f7e6b751d47ee2d",
+				"dweb:/ipfs/QmcRWpaBeCYkhy68PR3B4AgD7asuQk7PwkWxrvJbZcikLF"
+			]
+		},
+		"lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol": {
+			"keccak256": "0x74ed01eb66b923d0d0cfe3be84604ac04b76482a55f9dd655e1ef4d367f95bc2",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://5282825a626cfe924e504274b864a652b0023591fa66f06a067b25b51ba9b303",
+				"dweb:/ipfs/QmeCfPykghhMc81VJTrHTC7sF6CRvaA1FXVq2pJhwYp1dV"
+			]
+		},
+		"lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol": {
+			"keccak256": "0xd6fa4088198f04eef10c5bce8a2f4d60554b7ec4b987f684393c01bf79b94d9f",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://f95ee0bbd4dd3ac730d066ba3e785ded4565e890dbec2fa7d3b9fe3bad9d0d6e",
+				"dweb:/ipfs/QmSLr6bHkPFWT7ntj34jmwfyskpwo97T9jZUrk5sz3sdtR"
+			]
+		},
+		"lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol": {
+			"keccak256": "0x304d732678032a9781ae85c8f204c8fba3d3a5e31c02616964e75cfdc5049098",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://299ced486011781dc98f638059678323c03079fefae1482abaa2135b22fa92d0",
+				"dweb:/ipfs/QmbZNbcPTBxNvwChavN2kkZZs7xHhYL7mv51KrxMhsMs3j"
+			]
+		},
+		"lib/openzeppelin-contracts/contracts/utils/Context.sol": {
+			"keccak256": "0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://6a708e8a5bdb1011c2c381c9a5cfd8a9a956d7d0a9dc1bd8bcdaf52f76ef2f12",
+				"dweb:/ipfs/Qmax9WHBnVsZP46ZxEMNRQpLQnrdE4dK8LehML1Py8FowF"
+			]
+		},
+		"lib/openzeppelin-contracts/contracts/utils/introspection/ERC165.sol": {
+			"keccak256": "0x2d9dc2fe26180f74c11c13663647d38e259e45f95eb88f57b61d2160b0109d3e",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://81233d1f98060113d9922180bb0f14f8335856fe9f339134b09335e9f678c377",
+				"dweb:/ipfs/QmWh6R35SarhAn4z2wH8SU456jJSYL2FgucfTFgbHJJN4E"
+			]
+		},
+		"lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol": {
+			"keccak256": "0x8891738ffe910f0cf2da09566928589bf5d63f4524dd734fd9cedbac3274dd5c",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://971f954442df5c2ef5b5ebf1eb245d7105d9fbacc7386ee5c796df1d45b21617",
+				"dweb:/ipfs/QmadRjHbkicwqwwh61raUEapaVEtaLMcYbQZWs9gUkgj3u"
+			]
+		},
+		"src/Decimals.sol": {
+			"keccak256": "0xb10b27428ef5604f15dd2b54befe0d66e81a1d1db8869d9cb26e7b4df8a01fda",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://4e3e02649fcdd2a3b2bb187296f90264430144ad4b5344bccc59f270e11b9bfc",
+				"dweb:/ipfs/Qme8ZgwF8ETF5hrhRkMy3kG9BiCFPzKqVdHuybf5bEaZYS"
+			]
+		},
+		"src/KipuBankV3.sol": {
+			"keccak256": "0xb8ed5aed5bd9a8928c824964f9b458da93eb9a5cd945027f36b2a39ef96e9a77",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://4519c2350263b39c51b59dce56709c2184f5fdfd46f602d2363ef48b9bad4fa9",
+				"dweb:/ipfs/QmRTnPK8vKz3xLQ8hQzqDzyMzmUKRYATi2CsuQa4ukSH8m"
+			]
+		},
+		"src/Types.sol": {
+			"keccak256": "0x3eb8fe1bb1326be93b247538429e5b68db824959325653549901a8f3ed612454",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://acb00e4cf7b30259d0853c2d473e395958ba996607d36c092890e8a2fbf5c4e6",
+				"dweb:/ipfs/QmX9XfEyz6Mw7txcYyFPuD4isGm8i3aregi4mdHkhKNoJN"
+			]
+		}
+	},
+	"version": 1
+}
