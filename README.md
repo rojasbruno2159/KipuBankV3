@@ -91,6 +91,3 @@ Solo **roles admin** pueden habilitar nuevos tokens y fijar/ajustar el **bankCap
 
 ## ✍️ **Autoría**
 **Diseño y desarrollo:** Bruno Rojas
-✍️ Autoría
-
-Diseño y desarrollo: Bruno Rojas
