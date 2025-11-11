@@ -2,7 +2,7 @@
 
 Protocolo de depósito con conversión automática a USDC vía Uniswap V2 y precios de Chainlink, con control de acceso y límite de banca (bankCap) expresado en USDC.
 
-Objetivo de esta entrega: documentar las mejoras, explicar despliegue/interacción, detallar decisiones de diseño/trade‑offs y presentar un informe de amenazas junto con cobertura y métodos de prueba.
+Objetivo: documentar las mejoras, explicar despliegue/interacción, detallar decisiones de diseño/trade‑offs y presentar un informe de amenazas junto con cobertura y métodos de prueba.
 
 📘 Visión General
 
@@ -27,21 +27,19 @@ Pruebas unitarias: cobertura ≥ 50% (ver sección de cobertura para cifras real
 ⚙️ Instalación y Despliegue
 Requisitos
 
-Foundry instalado:
-  foundryup
-
-Dependencias (desde la raíz del repo)
+- Foundry instalado.
+  
+- Dependencias (desde la raíz del repo).
  forge install openzeppelin/openzeppelin-contracts 
  forge install smartcontractkit/chainlink-brownie-contracts 
  forge install uniswap/v2-periphery
 
-Compilación:
- forge build
+- Compilacion.
 
 Despliegue + verificación (Desde /script o la raíz)
  forge script script/DeployKipuBankV3.s.sol \
---rpc-url $RPC_URL \
---private-key $PRIVATE_KEY \
+--rpc-url "RPC_URL" \
+--private-key "PRIVATE_KEY" \
 --broadcast \
 --verify
 
@@ -78,79 +76,6 @@ El bankCap está expresado en unidades de USDC (6 decimales).
 
 Solo roles admin pueden habilitar nuevos tokens y fijar/ajustar bankCap.
 
-⚙️ Instalación y Despliegue
-
-Requisitos:
-
-Foundry instalado:
-
-curl -L https://foundry.paradigm.xyz | bash
-foundryup
-
-
-Variables de entorno:
-
-export PRIVATE_KEY="0xTU_CLAVE_PRIVADA"
-export RPC_URL="https://ethereum-sepolia-rpc.publicnode.com"
-export ETHERSCAN_API_KEY="TU_API_KEY"
-
-
-Dependencias (desde la raíz del repo):
-
-forge install openzeppelin/openzeppelin-contracts 
-forge install smartcontractkit/chainlink-brownie-contracts 
-forge install uniswap/v2-periphery 
-
-
-Compilación:
-
-forge build
-
-
-Despliegue + verificación (Sepolia):
-
-forge script script/DeployKipuBankV3.s.sol \
-  --rpc-url $RPC_URL \
-  --private-key $PRIVATE_KEY \
-  --broadcast \
-  --verify \
-  --etherscan-api-key $ETHERSCAN_API_KEY
-
-💻 Interacción Básica
-
-Consultar el límite del banco:
-
-KipuBankV3.bankCap();
-
-
-Consultar saldo en USDC por usuario:
-
-KipuBankV3.userBalance(usuario);
-
-
-Depositar ETH:
-
-KipuBankV3.deposit{value: 1 ether}(address(0));
-
-
-Depositar ERC-20:
-
-IERC20(token).approve(address(KipuBankV3), amount);
-KipuBankV3.deposit(token);
-
-
-Retirar USDC:
-
-KipuBankV3.withdraw(amountUSDC);
-
-
-Notas:
-
-La conversión a USDC se ejecuta internamente vía Uniswap V2.
-
-El bankCap está expresado en unidades de USDC (6 decimales).
-
-Solo roles admin pueden habilitar nuevos tokens y ajustar el bankCap.
 
 🧠 Decisiones de Diseño y Trade-offs
 
@@ -174,7 +99,7 @@ Asunción de decimales: tokens mal configurados pueden romper la normalización.
 
 Ausencia de auditoría externa, solo pruebas unitarias.
 
-Recomendaciones para madurez
+Recomendaciones para madurez:
 
 Incorporar Pausable y ReentrancyGuard de OpenZeppelin.
 
@@ -220,7 +145,7 @@ Branches: 74.19%
 Funciones: 97.30%
 
 
-📎 Cómo reproducir localmente
+📎 Cómo reproducir test localmente
 
 Ejecutar todas las pruebas:
 
